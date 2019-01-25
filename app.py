@@ -1,4 +1,5 @@
 import time
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,6 +11,13 @@ from selenium.webdriver.common.keys import Keys
 # options.add_argument('--ignore-ssl-errors')
 # driver = webdriver.Chrome(chrome_options = options)
 # print("launch start"
+# hospital_file = pd.read_excel(,parse_cols=[1])
+# first_col = hospital_file.iloc[: ,0]
+path = "C:/Users/axafrance/Desktop/Hospital_Rajasthan.xlsx"
+
+all_hospital = pd.read_excel(path)
+full_details = all_hospital.iloc[0:len(all_hospital) ,[0,1]]
+
 driver = webdriver.Chrome(executable_path=r'C:\Program Files (x86)\Google\chromedriver')
 driver.get("https://www.gps-coordinates.net/")
 #time.sleep(10)
@@ -20,24 +28,29 @@ try:
 except:
 	print("search box isn't yet available")
 # print("search over")
-time.sleep(2)
-elem.clear()
-elem.send_keys("DR VIJAY ENT HOSPITAL AJMER")
-elem.send_keys(Keys.RETURN)
-time.sleep(1)
-hospital_suggestions = driver.find_element_by_class_name("hdpi")
-items = hospital_suggestions.find_elements_by_class_name("pac-item")
-print(len(items))
-#print(items)
-if(len(items)==1):
-	#items.click()
-	get_button = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[3]/div[1]/form[1]/div[2]/div/button")
-	get_button.click()
+for index, row in full_details.iterrows():
+	hospital = row["Hospital Name"]+" "+row["Hospital District"]
 	time.sleep(2)
-	#lat = driver.find_element_by_xpath("//*[@id='info_window']")
-	
-	print("Latitude = ",(driver.find_element_by_id('latitude')).get_attribute('value'))#lat.get_attribute('innerHTML'))
-	print("Longitude= ",(driver.find_element_by_id('longitude')).get_attribute('value'))
+	elem.clear()
+	elem.send_keys(hospital)
+	elem.send_keys(Keys.RETURN)
+	time.sleep(1)
+	hospital_suggestions = driver.find_element_by_class_name("hdpi")
+	items = hospital_suggestions.find_elements_by_class_name("pac-item")
+	print(len(items))
+	#print(items)
+	if(len(items)==1):
+		#items.click()
+		get_button = driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[3]/div[1]/form[1]/div[2]/div/button")
+		get_button.click()
+		time.sleep(2)
+		#lat = driver.find_element_by_xpath("//*[@id='info_window']")
+		
+		print("Latitude = ",(driver.find_element_by_id('latitude')).get_attribute('value'))#lat.get_attribute('innerHTML'))
+		print("Longitude= ",(driver.find_element_by_id('longitude')).get_attribute('value'))
+		(driver.find_element_by_id('latitude')).clear()
+		(driver.find_element_by_id('longitude')).clear()
+		print('\n')
 	#time.sleep(5)
 # for item in items:
 # 	tt = item.find_elements_by_tag_name('span')
